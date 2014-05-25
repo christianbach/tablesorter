@@ -292,6 +292,9 @@
             };
 
             function getElementText(config, node) {
+		var $node = $( node ),
+			data = $node.attr( 'data-sort-value' );
+		if ( data !== undefined ) return data;
 
                 var text = "";
 
