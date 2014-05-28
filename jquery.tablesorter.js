@@ -292,13 +292,14 @@
             };
 
             function getElementText(config, node) {
-		var $node = $( node ),
-			data = $node.attr( 'data-sort-value' );
-		if ( data !== undefined ) return data;
+            	
+                if (!node) return "";
+                
+		        var $node = $(node),
+		            data = $node.attr('data-sort-value');
+		        if (data !== undefined) return data;
 
                 var text = "";
-
-                if (!node) return "";
 
                 if (!config.supportsTextContent) config.supportsTextContent = node.textContent || false;
 
