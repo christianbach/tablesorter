@@ -76,3 +76,15 @@ $(document).ready(function()
     } 
 ); 
 ```
+
+For DateTime columns you can specify your pattern, like this:
+
+```javascript
+$(document).ready(function() 
+    { 
+        $("#myTable").tablesorter( {datePattern: 'pt'} ); 
+    } 
+); 
+```
+
+The available ones (currently) are: us, pt and uk. (for pt you can use 'dd/MM/yyyy hh:mm:ss')
