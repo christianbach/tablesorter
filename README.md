@@ -77,12 +77,12 @@ $(document).ready(function()
 ); 
 ```
 
-For DateTime columns you can specify your pattern, like this:
+For DateTime columns you can specify your format, like this:
 
 ```javascript
 $(document).ready(function() 
     { 
-        $("#myTable").tablesorter( {datePattern: 'pt'} ); 
+        $("#myTable").tablesorter( {dateFormat: 'pt'} ); 
     } 
 ); 
 ```
