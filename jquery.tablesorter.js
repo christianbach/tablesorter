@@ -388,7 +388,7 @@
                 
                 var header_index = computeTableHeaderCellIndexes(table);
 
-                $tableHeaders = $(table.config.selectorHeaders, table).each(function (index) {
+                var $tableHeaders = $(table.config.selectorHeaders, table).each(function (index) {
 
                     this.column = header_index[this.parentNode.rowIndex + "-" + this.cellIndex];
                     // this.column = index;
@@ -580,6 +580,8 @@
             }
 
             /* sorting methods */
+            
+            var sortWrapper;
 
             function multisort(table, sortList, cache) {
 
@@ -587,7 +589,7 @@
                     var sortTime = new Date();
                 }
 
-                var dynamicExp = "var sortWrapper = function(a,b) {",
+                var dynamicExp = "sortWrapper = function(a,b) {",
                     l = sortList.length;
 
                 // TODO: inline functions.
@@ -864,11 +866,9 @@
             };
             this.clearTableBody = function (table) {
                 if ($.browser.msie) {
-                    function empty() {
-                        while (this.firstChild)
-                        this.removeChild(this.firstChild);
+                    while (table.tBodies[0].firstChild) {
+                        table.tBodies[0].removeChild(table.tBodies[0].firstChild);
                     }
-                    empty.apply(table.tBodies[0]);
                 } else {
                     table.tBodies[0].innerHTML = "";
                 }
