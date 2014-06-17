@@ -131,7 +131,8 @@
                 decimal: '/\.|\,/g',
                 onRenderHeader: null,
                 selectorHeaders: 'thead th',
-                debug: false
+                debug: false,
+				tBodyIndex: 0
             };
 
             /* debuging utils */
@@ -159,7 +160,7 @@
                 }
 
                 if (table.tBodies.length == 0) return; // In the case of empty tables
-                var rows = table.tBodies[0].rows;
+                var rows = table.tBodies[table.config.tBodyIndex].rows;
 
                 if (rows[0]) {
 
@@ -251,8 +252,9 @@
                     var cacheTime = new Date();
                 }
 
-                var totalRows = (table.tBodies[0] && table.tBodies[0].rows.length) || 0,
-                    totalCells = (table.tBodies[0].rows[0] && table.tBodies[0].rows[0].cells.length) || 0,
+				var tBody = table.tBodies[table.config.tBodyIndex];
+                var totalRows = (tBody && tBody.rows.length) || 0,
+                    totalCells = (tBody.rows[0] && tBody.rows[0].cells.length) || 0,
                     parsers = table.config.parsers,
                     cache = {
                         row: [],
@@ -262,7 +264,7 @@
                 for (var i = 0; i < totalRows; ++i) {
 
                     /** Add the table data to main data array */
-                    var c = $(table.tBodies[0].rows[i]),
+                    var c = $(tBody.rows[i]),
                         cols = [];
 
                     // if this is a child row, add it to the last row's children and
@@ -334,7 +336,7 @@
                     n = c.normalized,
                     totalRows = n.length,
                     checkCell = (n[0].length - 1),
-                    tableBody = $(table.tBodies[0]),
+                    tableBody = $(table.tBodies[table.config.tBodyIndex]),
                     rows = [];
 
 
@@ -561,7 +563,7 @@
                 var c = table.config;
                 if (c.widthFixed) {
                     var colgroup = $('<colgroup>');
-                    $("tr:first td", table.tBodies[0]).each(function () {
+                    $("tr:first td", table.tBodies[table.config.tBodyIndex]).each(function () {
                         colgroup.append($('<col>').css('width', $(this).width()));
                     });
                     $(table).prepend(colgroup);
@@ -720,7 +722,8 @@
                     $headers.click(
 
                     function (e) {
-                        var totalRows = ($this[0].tBodies[0] && $this[0].tBodies[0].rows.length) || 0;
+						var tBody = $this[0].tBodies[config.tBodyIndex];
+                        var totalRows = (tBody && tBody.rows.length) || 0;
                         if (!this.sortDisabled && totalRows > 0) {
                             // Only call sortStart if sorting is
                             // enabled.
@@ -866,11 +869,12 @@
             };
             this.clearTableBody = function (table) {
                 if ($.browser.msie) {
-                    while (table.tBodies[0].firstChild) {
-                        table.tBodies[0].removeChild(table.tBodies[0].firstChild);
+					var tBody = table.tBodies[table.config.tBodyIndex];
+                    while (tBody.firstChild) {
+                        tBody.removeChild(tBody.firstChild);
                     }
                 } else {
-                    table.tBodies[0].innerHTML = "";
+                    tBody.innerHTML = "";
                 }
             };
         }
@@ -1020,7 +1024,7 @@
             var $tr, row = -1,
                 odd;
             // loop through the visible rows
-            $("tr:visible", table.tBodies[0]).each(function (i) {
+            $("tr:visible", table.tBodies[table.config.tBodyIndex]).each(function (i) {
                 $tr = $(this);
                 // style children rows the same way the parent
                 // row was styled
