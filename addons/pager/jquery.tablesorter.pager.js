@@ -67,6 +67,10 @@
 				}
 				
 				renderTable(table,c.rowsCopy);
+				
+				if (typeof c.callback === 'function') {
+					c.callback(table);
+				}
 			}
 			
 			function renderTable(table,rows) {
@@ -136,7 +140,8 @@
 				cssPageSize: '.pagesize',
 				seperator: "/",
 				positionFixed: true,
-				appender: this.appender
+				appender: this.appender,
+				callback: null
 			};
 			
 			this.construct = function(settings) {
