@@ -399,6 +399,7 @@
 
                     if (checkHeaderMetadata(this) || checkHeaderOptions(table, index)) this.sortDisabled = true;
 					if (checkHeaderOptionsSortingLocked(table, index)) this.order = this.lockedOrder = checkHeaderOptionsSortingLocked(table, index);
+                    if (checkHeaderSorting(table, index)) this.order = formatSortingOrder(checkHeaderSorting(table, index));
 
                     if (!this.sortDisabled) {
                         var $th = $(this).addClass(table.config.cssHeader);
@@ -502,7 +503,12 @@
                 if ((table.config.headers[i]) && (table.config.headers[i].lockedOrder)) return table.config.headers[i].lockedOrder;
                 return false;
             }
-			
+
+            function checkHeaderSorting(table, i) {
+                if ((table.config.headers[i]) && (table.config.headers[i].sortInitialOrder)) return table.config.headers[i].sortInitialOrder;
+                return false;
+            }
+
             function applyWidget(table) {
                 var c = table.config.widgets;
                 var l = c.length;
