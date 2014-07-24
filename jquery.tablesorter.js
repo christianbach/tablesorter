@@ -730,7 +730,13 @@
                             // get current column index
                             var i = this.column;
                             // get current column sort order
-                            this.order = this.count++ % 2;
+                            for (var z = 0; z < sortCSS.length; z++) {
+                                if ($cell.hasClass(sortCSS[z])) {
+                                    this.order = (this.order + 1) % 2;
+                                    this.count++;
+                                    break;
+                                }
+                            }
 							// always sort on the locked order.
 							if(this.lockedOrder) this.order = this.lockedOrder;
 							
