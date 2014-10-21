@@ -900,7 +900,8 @@
         is: function (s, table) {
             var c = table.config;
             return $.tablesorter.isDigit(s, c);
-        }, format: function (s) {
+        }, format: function (s, table) {
+            s = s.replace(table.config.thousandsSeparator, '');
             return $.tablesorter.formatFloat(s);
         }, type: "numeric"
     });
