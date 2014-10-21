@@ -120,6 +120,7 @@
                 sortAppend: null,
                 sortLocaleCompare: true,
                 sortChildren: false,
+                sortInPlace: false,
                 textExtraction: "simple",
                 parsers: {}, widgets: [],
                 widgetZebra: {
@@ -661,7 +662,10 @@
 
                 eval(dynamicExp);
 
-                cache.normalized.sort(sortWrapper);
+                // don't sort parent rows, if children rows are expanded and the "sort in place" setting is enabled
+                if (!table.config.sortInPlace || !$(table).find('.' + table.config.cssChildRow).is(':visible')) {
+                    cache.normalized.sort(sortWrapper);
+                }               
                 
                 if (table.config.sortChildren) {
                     var ncl = cache.normalizedChildren.length;
