@@ -128,7 +128,8 @@
                 sortList: [],
                 headerList: [],
                 dateFormat: "us",
-                decimal: '/\.|\,/g',
+                decimal: '.',
+                thousandsSeparator: ',',
                 onRenderHeader: null,
                 selectorHeaders: 'thead th',
                 debug: false
