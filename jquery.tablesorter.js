@@ -862,7 +862,8 @@
             };
             this.isDigit = function (s, config) {
                 // replace all an wanted chars and match.
-                return /^[-+]?\d*$/.test($.trim(s.replace(/[,.']/g, '')));
+                var regex = new RegExp('^[\\-\\+]?\\d*\\' + config.decimal + '?\\d*$', 'g');
+                return regex.test($.trim(s.replace(new RegExp('\\' + config.thousandsSeparator, 'g'), '')));
             };
             this.clearTableBody = function (table) {
                 if ($.browser.msie) {
@@ -899,17 +900,18 @@
         is: function (s, table) {
             var c = table.config;
             return $.tablesorter.isDigit(s, c);
-        }, format: function (s) {
-            return $.tablesorter.formatFloat(s);
+        }, format: function (s, table) {
+            return $.tablesorter.formatFloat(s.replace(new RegExp('\\' + table.config.thousandsSeparator, 'g'), '').replace(new RegExp('\\' + table.config.decimal, 'g'), '.'));
         }, type: "numeric"
     });
 
     ts.addParser({
         id: "currency",
-        is: function (s) {
-            return /^[£$€?.]/.test(s);
+        is: function (s, table) {
+            var c = table.config;
+            return /^\w?[£$€\?.]/.test(s) && $.tablesorter.isDigit(s.replace(new RegExp(/^\w?[£$€\?.]/g), ""), c);
         }, format: function (s) {
-            return $.tablesorter.formatFloat(s.replace(new RegExp(/[£$€]/g), ""));
+            return $.tablesorter.formatFloat(s.replace(new RegExp(/^\w?[£$€\?.]/g), "").replace(new RegExp('\\' + table.config.thousandsSeparator, 'g'), '').replace(new RegExp('\\' + table.config.decimal, 'g'), '.'));
         }, type: "numeric"
     });
 
