@@ -604,7 +604,7 @@
                     // var s = (table.config.parsers[c].type == "text") ? ((order == 0)
                     // ? makeSortText(c) : makeSortTextDesc(c)) : ((order == 0) ?
                     // makeSortNumeric(c) : makeSortNumericDesc(c));
-                    var s = (table.config.parsers[c].type == "text") ? ((order == 0) ? makeSortFunction("text", "asc", c) : makeSortFunction("text", "desc", c)) : ((order == 0) ? makeSortFunction("numeric", "asc", c) : makeSortFunction("numeric", "desc", c));
+                    var s = (table.config.parsers[c].type == "text") ? ((order == 0) ? makeSortFunction("text", "asc", c, table) : makeSortFunction("text", "desc", c, table)) : ((order == 0) ? makeSortFunction("numeric", "asc", c, table) : makeSortFunction("numeric", "desc", c, table));
                     var e = "e" + i;
 
                     dynamicExp += "var " + e + " = " + s; // + "(a[" + c + "],b[" + c
@@ -640,13 +640,19 @@
                 return cache;
             };
 
-            function makeSortFunction(type, direction, index) {
+            function makeSortFunction(type, direction, index, table) {
                 var a = "a[" + index + "]",
                     b = "b[" + index + "]";
                 if (type == 'text' && direction == 'asc') {
-                    return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : (" + a + " < " + b + ") ? -1 : 1 )));";
+                    if (table.config.sortLocaleCompare)
+                        return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : " + a + ".localeCompare(" + b + "))));";
+                    else
+                        return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : (" + a + " < " + b + ") ? -1 : 1 )));";
                 } else if (type == 'text' && direction == 'desc') {
-                    return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : (" + b + " < " + a + ") ? -1 : 1 )));";
+                    if (table.config.sortLocaleCompare)
+                        return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : " + b + ".localeCompare(" + a + "))));";
+                    else
+                        return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : (" + b + " < " + a + ") ? -1 : 1 )));";
                 } else if (type == 'numeric' && direction == 'asc') {
                     return "(" + a + " === null && " + b + " === null) ? 0 :(" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : " + a + " - " + b + "));";
                 } else if (type == 'numeric' && direction == 'desc') {
@@ -892,7 +898,7 @@
         is: function (s) {
             return true;
         }, format: function (s) {
-            return $.trim(s.toLocaleLowerCase().cleanAccents());
+            return $.trim(s.toLocaleLowerCase());
         }, type: "text"
     });
 
@@ -1040,30 +1046,3 @@
     });
 })(jQuery);
 
-// Convert characters with accents to normal
-String.prototype.cleanAccents = function () {
-    var string = this;
-    var mapaAcentosHex = {
-        a: /[\xE0-\xE6]/g,
-        A: /[\xC0-\xC6]/g,
-        e: /[\xE8-\xEB]/g,
-        E: /[\xC8-\xCB]/g,
-        i: /[\xEC-\xEF]/g,
-        I: /[\xCC-\xCF]/g,
-        o: /[\xF2-\xF6]/g,
-        O: /[\xD2-\xD6]/g,
-        u: /[\xF9-\xFC]/g,
-        U: /[\xD9-\xDC]/g,
-        c: /\xE7/g,
-        C: /\xC7/g,
-        n: /\xF1/g,
-        N: /\xD1/g,
-    };
-
-    for (var letra in mapaAcentosHex) {
-        var expressaoRegular = mapaAcentosHex[letra];
-        string = string.replace(expressaoRegular, letra);
-    }
-
-    return string;
-}
