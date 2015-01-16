@@ -862,7 +862,7 @@
             };
             this.isDigit = function (s, config) {
                 // replace all an wanted chars and match.
-                return /^[-+]?\d*$/.test($.trim(s.replace(/[,.']/g, '')));
+                return /^[-+]?\d+$/.test($.trim(s.replace(/[.,]/, '').replace(/[']/g, '')));
             };
             this.clearTableBody = function (table) {
                 if ($.browser.msie) {
