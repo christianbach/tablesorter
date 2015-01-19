@@ -4,6 +4,7 @@
 			
 			function updatePageDisplay(c) {
 				var s = $(c.cssPageDisplay,c.container).val((c.page+1) + c.seperator + c.totalPages);	
+        c.onTableRefresh.call(this);
 			}
 			
 			function setPageSize(table,size) {
@@ -136,7 +137,8 @@
 				cssPageSize: '.pagesize',
 				seperator: "/",
 				positionFixed: true,
-				appender: this.appender
+				appender: this.appender,
+        onTableRefresh: function() {}
 			};
 			
 			this.construct = function(settings) {
