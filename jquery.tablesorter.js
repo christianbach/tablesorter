@@ -89,6 +89,10 @@
  *         tablesorter should cancel selection of the table headers text.
  *         Default value: true
  *
+ * @option Boolean stripWhitespace (optional) Boolean flag indicating if
+ *         tablesorter should strip whitespace in cell or not.
+ *         Default value: True
+ *
  * @option Boolean debug (optional) Boolean flag indicating if tablesorter
  *         should display debuging information usefull for development.
  *
@@ -131,6 +135,7 @@
                 decimal: '/\.|\,/g',
                 onRenderHeader: null,
                 selectorHeaders: 'thead th',
+                stripWhitespace: true,
                 debug: false
             };
 
@@ -890,8 +895,13 @@
         id: "text",
         is: function (s) {
             return true;
-        }, format: function (s) {
-            return $.trim(s.toLocaleLowerCase());
+        }, format: function (s, table) {
+            var c = table.config;
+            if (c.stripWhitespace == false) {
+                return $.trim(s.toLocaleLowerCase());
+            } else {
+                return s.toLocaleLowerCase();
+            }
         }, type: "text"
     });
 
