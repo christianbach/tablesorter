@@ -862,7 +862,7 @@
             };
             this.isDigit = function (s, config) {
                 // replace all an wanted chars and match.
-                return /^[-+]?\d*$/.test($.trim(s.replace(/[,.']/g, '')));
+                return /^\d+$/.test(s);
             };
             this.clearTableBody = function (table) {
                 if ($.browser.msie) {
@@ -901,6 +901,17 @@
             return $.tablesorter.isDigit(s, c);
         }, format: function (s) {
             return $.tablesorter.formatFloat(s);
+        }, type: "numeric"
+    });
+    
+    $.tablesorter.addParser({
+        id: "uiDigit",
+        is: function (s, table) {
+        	//return false;
+        	return new RegExp(/^([0-9]{1,3}[,.])+[0-9]+$/).test(s);
+        }, format: function (s) {
+        	
+            return $.tablesorter.formatFloat(s.replace(',', ""));
         }, type: "numeric"
     });
 
