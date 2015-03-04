@@ -671,20 +671,20 @@
 
             function sortText(a, b) {
                 if (table.config.sortLocaleCompare) return a.localeCompare(b);
-                return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+                return ((b < a) ? -1 : ((b > a) ? 1 : 0));
             };
 
             function sortTextDesc(a, b) {
                 if (table.config.sortLocaleCompare) return b.localeCompare(a);
-                return ((b < a) ? -1 : ((b > a) ? 1 : 0));
+                return ((a < b) ? -1 : ((a > b) ? 1 : 0));
             };
 
             function sortNumeric(a, b) {
-                return a - b;
+                return b - a;
             };
 
             function sortNumericDesc(a, b) {
-                return b - a;
+                return a - b;
             };
 
             function getCachedSortType(parsers, i) {
