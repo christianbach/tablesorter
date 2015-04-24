@@ -434,8 +434,8 @@
             function computeTableHeaderCellIndexes(t) {
                 var matrix = [];
                 var lookup = {};
-                var thead = t.getElementsByTagName('THEAD')[0];
-                var trs = thead.getElementsByTagName('TR');
+                var thead = t.getElementsByTagName('thead')[0];
+                var trs = thead.getElementsByTagName('tr');
 
                 for (var i = 0; i < trs.length; i++) {
                     var cells = trs[i].cells;
