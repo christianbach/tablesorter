@@ -553,7 +553,9 @@
 
                 var l = list.length;
                 for (var i = 0; i < l; i++) {
-                    h[list[i][0]].addClass(css[list[i][1]]);
+					if (typeof(h[list[i][0]]) != 'undefined') {
+						h[list[i][0]].addClass(css[list[i][1]]);
+					}
                 }
             }
 
