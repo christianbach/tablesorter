@@ -576,8 +576,10 @@
                 for (var i = 0; i < l; i++) {
                     var s = sortList[i],
                         o = c.headerList[s[0]];
-                    o.count = s[1];
-                    o.count++;
+					if (typeof(o) != 'undefined') {
+						o.count = s[1];
+						o.count++;
+					}
                 }
             }
 
@@ -605,8 +607,11 @@
                     // var s = (table.config.parsers[c].type == "text") ? ((order == 0)
                     // ? makeSortText(c) : makeSortTextDesc(c)) : ((order == 0) ?
                     // makeSortNumeric(c) : makeSortNumericDesc(c));
-                    var s = (table.config.parsers[c].type == "text") ? ((order == 0) ? makeSortFunction("text", "asc", c) : makeSortFunction("text", "desc", c)) : ((order == 0) ? makeSortFunction("numeric", "asc", c) : makeSortFunction("numeric", "desc", c));
-                    var e = "e" + i;
+					var s = ((order == 0) ? makeSortFunction("numeric", "asc", c) : makeSortFunction("numeric", "desc", c));
+					if (typeof(table.config.parsers[c]) != 'undefined') {
+						var s = (table.config.parsers[c].type == "text") ? ((order == 0) ? makeSortFunction("text", "asc", c) : makeSortFunction("text", "desc", c)) : ((order == 0) ? makeSortFunction("numeric", "asc", c) : makeSortFunction("numeric", "desc", c));
+                    }
+					var e = "e" + i;
 
                     dynamicExp += "var " + e + " = " + s; // + "(a[" + c + "],b[" + c
                     // + "]); ";
