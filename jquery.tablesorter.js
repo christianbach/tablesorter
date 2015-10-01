@@ -75,6 +75,9 @@
  * @option Boolean sortLocaleCompare (optional) Boolean flag indicating whatever
  *         to use String.localeCampare method or not. Default set to true.
  * 
+ * @option Array sortLocaleOverride (optional) This array overrides the locale(s)
+ *         that are used for sorting (only used if sortLocaleCompare is true). By
+ *         default the locale from the browser settings are used.
  * 
  * @option Array sortAppend (optional) An array containing forced sorting rules.
  *         This option let's you specify a default sorting rule, which is
@@ -119,6 +122,7 @@
                 sortForce: null,
                 sortAppend: null,
                 sortLocaleCompare: true,
+                sortLocaleOverride: [],
                 textExtraction: "simple",
                 parsers: {}, widgets: [],
                 widgetZebra: {
@@ -645,12 +649,12 @@
                     b = "b[" + index + "]";
                 if (type == 'text' && direction == 'asc') {
                     if (table.config.sortLocaleCompare)
-                        return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : " + a + ".localeCompare(" + b + "))));";
+                        return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : " + a + ".localeCompare(" + b + ", table.config.sortLocaleOverride))));";
                     else
                         return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : (" + a + " < " + b + ") ? -1 : 1 )));";
                 } else if (type == 'text' && direction == 'desc') {
                     if (table.config.sortLocaleCompare)
-                        return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : " + b + ".localeCompare(" + a + "))));";
+                        return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : " + b + ".localeCompare(" + a + ", table.config.sortLocaleOverride))));";
                     else
                         return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : (" + b + " < " + a + ") ? -1 : 1 )));";
                 } else if (type == 'numeric' && direction == 'asc') {
@@ -677,12 +681,12 @@
             };
 
             function sortText(a, b) {
-                if (table.config.sortLocaleCompare) return a.localeCompare(b);
+                if (table.config.sortLocaleCompare) return a.localeCompare(b, table.config.sortLocaleOverride);
                 return ((a < b) ? -1 : ((a > b) ? 1 : 0));
             };
 
             function sortTextDesc(a, b) {
-                if (table.config.sortLocaleCompare) return b.localeCompare(a);
+                if (table.config.sortLocaleCompare) return b.localeCompare(a, table.config.sortLocaleOverride);
                 return ((b < a) ? -1 : ((b > a) ? 1 : 0));
             };
 
