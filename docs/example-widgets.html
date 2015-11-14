@@ -26,19 +26,18 @@
 						h.push(
 							"<th>" + $(this).text() + "</th>"
 						);
-						
 					});
 				}
 				
 				// remove appended headers by classname.
-				$("tr.repated-header",table).remove();
+				$("tr.repeated-header",table).remove();
 				
 				// loop all tr elements and insert a copy of the "headers"	
 				for(var i=0; i < table.tBodies[0].rows.length; i++) {
 					// insert a copy of the table head every 10th row
 					if((i%5) == 4) {
 						$("tbody tr:eq(" + i + ")",table).before(
-							$("<tr></tr>").addClass("repated-header").html(this.headers.join(""))
+							$("<tr></tr>").addClass("repeated-header").html(this.headers.join(""))
 						
 						);	
 					}
@@ -77,21 +76,20 @@ $.tablesorter.addWidget({
 			var h = this.headers = []; 
 			$("thead th",table).each(function() {
 				h.push(
-					"<th>" + $(this).text() + "</th>"
+					"&lt;th&gt;" + $(this).text() + "&lt;/th&gt;"
 				);
-				
 			});
 		}
 		
 		// remove appended headers by classname.
-		$("tr.repated-header",table).remove();
+		$("tr.repeated-header",table).remove();
 		
 		// loop all tr elements and insert a copy of the "headers"	
 		for(var i=0; i < table.tBodies[0].rows.length; i++) {
 			// insert a copy of the table head every 10th row
 			if((i%5) == 4) {
 				$("tbody tr:eq(" + i + ")",table).before(
-					$("<tr></tr>").html(this.headers.join(""))
+					$("&lt;tr&gt;&lt;/tr&gt;").addClass("repeated-header").html(this.headers.join(""))
 				
 				);	
 			}
