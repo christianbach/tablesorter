@@ -1003,7 +1003,7 @@
     ts.addParser({
         id: "time",
         is: function (s) {
-            return /^(([0-2]?[0-9]:[0-5][0-9])|([0-1]?[0-9]:[0-5][0-9]\s(am|pm)))$/.test(s);
+            return /^(([0-2]?[0-9]:[0-5][0-9])|([0-1]?[0-9]:[0-5][0-9]\s(am|pm|AM|PM)))$/.test(s);
         }, format: function (s) {
             return $.tablesorter.formatFloat(new Date("2000/01/01 " + s).getTime());
         }, type: "numeric"
