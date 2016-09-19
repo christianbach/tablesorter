@@ -14,7 +14,7 @@ $(function() {
 				.replace(/<\/th>/g,'</th>\n')
 				.replace(/<\/tr>/g,'\t\t</tr>')
 				.replace(/<tr>/g,'\n\t\t<tr>\n')
-				.replace(/<thead/g,'\n\t<thead>')
+				.replace(/<thead/g,'\n\t<thead')
 				.replace(/<\/thead>/g,'\n\t</thead>')
 				.replace(/<tbody/g,'\n\t<tbody')
 				.replace(/<\/tbody>/g,'\n\t</tbody>')
