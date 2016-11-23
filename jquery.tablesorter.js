@@ -870,8 +870,19 @@
             };
             this.isDigit = function (s, config) {
                 // replace all an wanted chars and match.
-                return /^[-+]?\d*$/.test($.trim(s.replace(/[,.']/g, '')));
+                return /^[-+]?\d+$/.test($.trim(s.replace(/[.,]/, '').replace(/[']/g, '')));
             };
+            this.paddingInt = function (number, totalDigits) {
+                var digits = typeof totalDigits !== 'undefined' ? int(totalDigits) : 20;
+                var numStr = number.toString();
+                for (var i = numStr.length; i < digits; ++i) {
+                    numStr = '0' + numStr;
+                }
+                return numStr;
+            }
+            this.isVersion = function (s) {
+                return /^\d+(\.\d+)+([-_]\w+)?$/.test(s);
+            }
             this.clearTableBody = function (table) {
                 if ($.browser.msie) {
                     while (table.tBodies[0].firstChild) {
@@ -910,6 +921,24 @@
         }, format: function (s) {
             return $.tablesorter.formatFloat(s);
         }, type: "numeric"
+    });
+
+    ts.addParser({
+        id: "version",
+        is: function (s, table) {
+            return $.tablesorter.isVersion(s);
+        }, format: function (s) {
+            var res = "";
+            var segments = s.split(/[-_.]/);
+            for(var i = 0; i < segments.length; ++i) {
+                var value = segments[i];
+                if ($.tablesorter.isDigit(value)) {
+                    value = $.tablesorter.paddingInt(value);
+                }
+                res = res + '_' + value;
+            }
+            return res;
+        }, type: "text"
     });
 
     ts.addParser({
