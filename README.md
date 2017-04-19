@@ -1,8 +1,10 @@
 tablesorter
 ===========
 
-###Flexible client-side table sorting
-####Getting started
+
+### Flexible client-side table sorting
+
+#### Getting started
 
 To use the tablesorter plugin, include the jQuery library and the tablesorter plugin inside the head-tag of your HTML document:
 
