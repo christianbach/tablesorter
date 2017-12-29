@@ -14,10 +14,12 @@ table.tablesorter thead tr th, table.tablesorter tfoot tr th {
 	padding: 4px;
 }
 table.tablesorter thead tr .header {
-	background-image: url(bg.gif);
-	background-repeat: no-repeat;
-	background-position: center right;
 	cursor: pointer;
+}
+table.tablesorter thead tr .header:after {
+  content: "\f0dc"; 
+  font-family: FontAwesome;
+  float:right;
 }
 table.tablesorter tbody td {
 	color: #3D3D3D;
@@ -28,11 +30,18 @@ table.tablesorter tbody td {
 table.tablesorter tbody tr.odd td {
 	background-color:#F0F0F6;
 }
-table.tablesorter thead tr .headerSortUp {
-	background-image: url(asc.gif);
+table.tablesorter thead tr .headerSortUp:after {
+  content: "\f0d7"; 
+  font-family: FontAwesome;
+  float:right;
 }
-table.tablesorter thead tr .headerSortDown {
-	background-image: url(desc.gif);
+
+table.tablesorter thead tr .headerSortDown:after {
+		
+  content: "\f0d8"; 
+  font-family: FontAwesome;
+  float:right;
+	
 }
 table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
 background-color: #8dbdd8;
