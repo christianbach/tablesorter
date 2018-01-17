@@ -136,7 +136,8 @@
                 sortList: [],
                 headerList: [],
                 dateFormat: "us",
-                decimal: '/\.|\,/g',
+                decimal: '.',
+                thousandsSeparator: ',',
                 onRenderHeader: null,
                 selectorHeaders: 'thead th',
                 debug: false
@@ -611,7 +612,7 @@
                     // var s = (table.config.parsers[c].type == "text") ? ((order == 0)
                     // ? makeSortText(c) : makeSortTextDesc(c)) : ((order == 0) ?
                     // makeSortNumeric(c) : makeSortNumericDesc(c));
-                    var s = (table.config.parsers[c].type == "text") ? ((order == 0) ? makeSortFunction("text", "asc", c) : makeSortFunction("text", "desc", c)) : ((order == 0) ? makeSortFunction("numeric", "asc", c) : makeSortFunction("numeric", "desc", c));
+                    var s = (table.config.parsers[c].type == "text") ? ((order == 0) ? makeSortFunction("text", "asc", c, table) : makeSortFunction("text", "desc", c, table)) : ((order == 0) ? makeSortFunction("numeric", "asc", c, table) : makeSortFunction("numeric", "desc", c, table));
                     var e = "e" + i;
 
                     dynamicExp += "var " + e + " = " + s; // + "(a[" + c + "],b[" + c
@@ -647,13 +648,19 @@
                 return cache;
             };
 
-            function makeSortFunction(type, direction, index) {
+            function makeSortFunction(type, direction, index, table) {
                 var a = "a[" + index + "]",
                     b = "b[" + index + "]";
                 if (type == 'text' && direction == 'asc') {
-                    return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : (" + a + " < " + b + ") ? -1 : 1 )));";
+                    if (table.config.sortLocaleCompare)
+                        return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : " + a + ".localeCompare(" + b + "))));";
+                    else
+                        return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : (" + a + " < " + b + ") ? -1 : 1 )));";
                 } else if (type == 'text' && direction == 'desc') {
-                    return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : (" + b + " < " + a + ") ? -1 : 1 )));";
+                    if (table.config.sortLocaleCompare)
+                        return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : " + b + ".localeCompare(" + a + "))));";
+                    else
+                        return "(" + a + " == " + b + " ? 0 : (" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : (" + b + " < " + a + ") ? -1 : 1 )));";
                 } else if (type == 'numeric' && direction == 'asc') {
                     return "(" + a + " === null && " + b + " === null) ? 0 :(" + a + " === null ? Number.POSITIVE_INFINITY : (" + b + " === null ? Number.NEGATIVE_INFINITY : " + a + " - " + b + "));";
                 } else if (type == 'numeric' && direction == 'desc') {
@@ -870,7 +877,8 @@
             };
             this.isDigit = function (s, config) {
                 // replace all an wanted chars and match.
-                return /^[-+]?\d*$/.test($.trim(s.replace(/[,.']/g, '')));
+                var regex = new RegExp('^[\\-\\+]?\\d*\\' + config.decimal + '?\\d*$', 'g');
+                return regex.test($.trim(s.replace(new RegExp('\\' + config.thousandsSeparator, 'g'), '')));
             };
             this.clearTableBody = function (table) {
                 if ($.browser.msie) {
@@ -907,17 +915,18 @@
         is: function (s, table) {
             var c = table.config;
             return $.tablesorter.isDigit(s, c);
-        }, format: function (s) {
-            return $.tablesorter.formatFloat(s);
+        }, format: function (s, table) {
+            return $.tablesorter.formatFloat(s.replace(new RegExp('\\' + table.config.thousandsSeparator, 'g'), '').replace(new RegExp('\\' + table.config.decimal, 'g'), '.'));
         }, type: "numeric"
     });
 
     ts.addParser({
         id: "currency",
-        is: function (s) {
-            return /^[£$€?.]/.test(s);
+        is: function (s, table) {
+            var c = table.config;
+            return /^\w?[£$€\?.]/.test(s) && $.tablesorter.isDigit(s.replace(new RegExp(/^\w?[£$€\?.]/g), ""), c);
         }, format: function (s) {
-            return $.tablesorter.formatFloat(s.replace(new RegExp(/[£$€]/g), ""));
+            return $.tablesorter.formatFloat(s.replace(new RegExp(/^\w?[£$€\?.]/g), "").replace(new RegExp('\\' + table.config.thousandsSeparator, 'g'), '').replace(new RegExp('\\' + table.config.decimal, 'g'), '.'));
         }, type: "numeric"
     });
 
@@ -1044,3 +1053,4 @@
         }
     });
 })(jQuery);
+
