@@ -933,6 +933,8 @@
                 var item = a[i];
                 if (item.length == 2) {
                     r += "0" + item;
+                } else if (item.length == 1) {
+                    r += "00" + item;
                 } else {
                     r += item;
                 }
