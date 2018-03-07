@@ -697,13 +697,35 @@
 
             function getCachedSortType(parsers, i) {
                 return parsers[i].type;
-            }; /* public methods */
+            };
+
+            function filterTable(table, cache, filter) {
+                if (table.config.debug) {
+                    var sortTime = new Date();
+                }
+                var filteredCache = {
+                    row: cache.row,
+                    normalized: []
+                };
+                for(var i = 0; i < cache.normalized.length; i++) {
+                    var o = cache.normalized[i];
+                    if(filter(o)) {
+                        filteredCache.normalized.push(o);
+                    }
+                }
+                if (table.config.debug) {
+                    benchmark("Search table using " + filter + " time:", sortTime);
+                }
+                return filteredCache;
+            }
+
+            /* public methods */
             this.construct = function (settings) {
                 return this.each(function () {
                     // if no thead or tbody quit.
                     if (!this.tHead || !this.tBodies) return;
                     // declare
-                    var $this, $document, $headers, cache, config, shiftDown = 0,
+                    var $this, $document, $headers, cache, config, origCache = null, shiftDown = 0,
                         sortOrder;
                     // new blank config object
                     this.config = {};
@@ -833,6 +855,24 @@
                     }).bind("applyWidgets", function () {
                         // apply widgets
                         applyWidget(this);
+                    }).bind("filter", function(e, filter){
+                        var filteredCache = filterTable(this, cache, filter);
+                        if(origCache == null) {
+                            origCache = {
+                                row: [],
+                                normalized: []
+                            };
+                            origCache.row = cache.row;
+                            origCache.normalized = cache.normalized;
+                        }
+                        cache.normalized = filteredCache.normalized;
+                        appendToTable(this, cache);
+                    }).bind("clearFilters", function() {
+                        if(origCache != null) {
+                            cache = origCache;
+                            origCache = null;
+                            appendToTable(this, cache);
+                        }
                     });
                     if ($.metadata && ($(this).metadata() && $(this).metadata().sortlist)) {
                         config.sortList = $(this).metadata().sortlist;

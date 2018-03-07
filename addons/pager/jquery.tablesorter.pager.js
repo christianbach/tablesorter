@@ -120,7 +120,17 @@
 				
 				renderTable(table,rows);
 			};
-			
+
+			this.jumpToPage = function() {
+                return this.each(function() {
+                    var c = this.config;
+                    var pageinfo = $(c.cssPageDisplay,c.container).val();
+                    c.page = parseInt(pageinfo.substr(0, pageinfo.indexOf(c.seperator))) - 1;
+                    moveToPage(this);
+                    return false;
+                })
+            };
+
 			this.defaults = {
 				size: 10,
 				offset: 0,
@@ -173,12 +183,12 @@
 					});
 				});
 			};
-			
 		}
 	});
 	// extend plugin scope
 	$.fn.extend({
-        tablesorterPager: $.tablesorterPager.construct
+        tablesorterPager: $.tablesorterPager.construct,
+        tablesorterPagerjump: $.tablesorterPager.jumpToPage
 	});
 	
 })(jQuery);				
