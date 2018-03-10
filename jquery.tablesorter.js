@@ -981,7 +981,7 @@
     ts.addParser({
         id: "shortDate",
         is: function (s) {
-            return /\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/.test(s);
+            return /^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}$/.test(s);
         }, format: function (s, table) {
             var c = table.config;
             s = s.replace(/\-/g, "/");
