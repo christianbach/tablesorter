@@ -911,6 +911,16 @@
             return $.tablesorter.formatFloat(s);
         }, type: "numeric"
     });
+    
+    ts.addParser({
+        id: "uiDigit",
+        is: function (s, table) {
+            var c = table.config;
+            return /[1-9](?:\d{0,2})(?:,\d{3})*(?:\.\d*[1-9])?|0?\.\d*[1-9]|0/.test(s);
+        }, format: function (s) {
+            return $.tablesorter.formatFloat(s);
+        }, type: "numeric"
+    });
 
     ts.addParser({
         id: "currency",
