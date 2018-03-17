@@ -127,6 +127,8 @@
                 sortForce: null,
                 sortAppend: null,
                 sortLocaleCompare: true,
+                sortChildren: false,
+                sortInPlace: false,
                 textExtraction: "simple",
                 parsers: {}, widgets: [],
                 widgetZebra: {
@@ -266,6 +268,10 @@
                         row: [],
                         normalized: []
                     };
+                    
+                if (table.config.sortChildren) {
+                    cache.normalizedChildren = [];
+                }
 
                 for (var i = 0; i < totalRows; ++i) {
 
@@ -277,6 +283,20 @@
                     // continue to the next row
                     if (c.hasClass(table.config.cssChildRow)) {
                         cache.row[cache.row.length - 1] = cache.row[cache.row.length - 1].add(c);
+                        
+                        // if we are planning to sort child rows, add the row to the special "normalizedChildren" Array
+                        if (table.config.sortChildren) {
+                            if (cache.normalizedChildren[cache.row.length - 1] === undefined) {
+                                cache.normalizedChildren[cache.row.length - 1] = [];
+                            }
+                            var normalizedChild = [];
+                            for (var j = 0; j < totalCells; ++j) {
+                                normalizedChild.push(parsers[j].format(getElementText(table.config, c[0].cells[j]), table, c[0].cells[j]));
+                            }
+                            normalizedChild.push(cache.normalizedChildren[cache.row.length - 1].length);  // add position for rowCache
+                            cache.normalizedChildren[cache.row.length - 1].push(normalizedChild);
+                        }
+                        
                         // go to the next for loop
                         continue;
                     }
@@ -295,7 +315,7 @@
                 if (table.config.debug) {
                     benchmark("Building cache for " + totalRows + " rows:", cacheTime);
                 }
-
+                
                 return cache;
             };
 
@@ -344,9 +364,13 @@
                     checkCell = (n[0].length - 1),
                     tableBody = $(table.tBodies[0]),
                     rows = [];
-
-
+            
+                if (table.config.sortChildren) {
+                    var nc = c.normalizedChildren;
+                }
+                
                 for (var i = 0; i < totalRows; i++) {
+
                     var pos = n[i][checkCell];
 
                     rows.push(r[pos]);
@@ -355,12 +379,20 @@
 
                         //var o = ;
                         var l = r[pos].length;
+                        
                         for (var j = 0; j < l; j++) {
-                            tableBody[0].appendChild(r[pos][j]);
+                            if (table.config.sortChildren && (j > 0)) {
+                                // if this row has children and they need to be sorted...
+                                var childIndex = nc[pos][j - 1][checkCell] + 1;
+                                tableBody[0].appendChild(r[pos][childIndex]);
+                            } else {
+                                tableBody[0].appendChild(r[pos][j]);
+                            }
                         }
 
                         // 
                     }
+                    
                 }
 
 
@@ -638,8 +670,18 @@
 
                 eval(dynamicExp);
 
-                cache.normalized.sort(sortWrapper);
-
+                // don't sort parent rows, if children rows are expanded and the "sort in place" setting is enabled
+                if (!table.config.sortInPlace || !$(table).find('.' + table.config.cssChildRow).is(':visible')) {
+                    cache.normalized.sort(sortWrapper);
+                }               
+                
+                if (table.config.sortChildren) {
+                    var ncl = cache.normalizedChildren.length;
+                    for (var i = 0; i < ncl; i++) {
+                        cache.normalizedChildren[i].sort(sortWrapper);
+                    }
+                }
+                
                 if (table.config.debug) {
                     benchmark("Sorting on " + sortList.toString() + " and dir " + order + " time:", sortTime);
                 }
