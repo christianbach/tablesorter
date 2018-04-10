@@ -741,7 +741,10 @@
                             this.order = this.count++ % 2;
 							// always sort on the locked order.
 							if(this.lockedOrder) this.order = this.lockedOrder;
-							
+							// set every other header back to the default initial sort order
+                            $headers.not($cell).each( function() {
+								this.count = formatSortingOrder(config.sortInitialOrder);
+							});							
 							// user only whants to sort on one
                             // column
                             if (!e[config.sortMultiSortKey]) {
