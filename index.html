@@ -1,6 +1,6 @@
 <head>
 <link rel="stylesheet" href="./docs/css/jq.css" type="text/css" media="print, projection, screen">
-<link rel="stylesheet" href="./themes/blue/style.css" type="text/css" media="print, projection, screen">
+<link rel="stylesheet" href="./themes/green/style.css" type="text/css" media="print, projection, screen">
 
 <script type="text/javascript" src="./jquery-3.3.1.js"></script> 
 <script type="text/javascript" src="./jquery.tablesorter.js"></script>
@@ -22,7 +22,9 @@ Clark	Kent	18	$15.89	44%	-26	Jan 12, 2003 11:14 AM
 <input type="button" value="Generate table!" onclick="generate_table(); return false;"/>
 
 <br><br>
-<table id="myTable" class="tablesorter" border="0" cellpadding="0" cellspacing="1"></table>
+<div id="table">
+	<table id="myTable" class="tablesorter" border="0" cellpadding="0" cellspacing="1"></table>
+</div>
 
 <script>
 	function generate_table(){	//generate the table
@@ -54,68 +56,81 @@ Clark	Kent	18	$15.89	44%	-26	Jan 12, 2003 11:14 AM
 			strings[i] = strings[i].split(re2);
 		}
 
-		var myTable = document.getElementById('myTable');//table element - to variable
-		if(myTable==null){throw new Error('invalid table is "myTable"');} //if this does not exists - error
+		var myTable = document.getElementById('myTable');//get table element - to variable
+		if(myTable==null){
+			//create and append to document.
+			document.getElementById('table').innerHTML += '<table id="myTable" class="tablesorter" border="0" cellpadding="0" cellspacing="1"></table>';
+			//get again
+			var myTable = document.getElementById('myTable');//table element - to variable
+		}
 		else{//else fill this...
-			var html = '';
+			myTable.parentNode.removeChild(myTable);
+			document.getElementById('table').innerHTML += '<table id="myTable" class="tablesorter" border="0" cellpadding="0" cellspacing="1"></table>';
+			//get again empty table
+			var myTable = document.getElementById('myTable');//table element - to variable
 			
-			//by rows
-			for(i=0; i<=strings.length;i++){
-				if(i==0){
-					html+='<thead>\n<tr>\n';
-				}
-				else if(strings[i]==""){continue;}	//skip empty rows as empty element in array.
-				else{
-					if(i==1){
-						html+='</tr>\n</thead>\n<tbody>\n';
-					}
-					if(typeof strings[i] !== 'undefined'){
-						if(i%2==0){
-							html+='<tr class="odd">\n';
-						}
-						else if(typeof strings[i+1] !== 'undefined'){
-							html+='<tr class="even">\n';
-						}
-					}
-					else{
-						html+='</tbody>\n';
-						break;
-					}					
-				}
-				//by cells.
-				for(j=0; j<strings[i].length; j++){
+			if(myTable==null){throw new Error('no table found with id "myTable"');}
+			else{
+				var html = '';
+			
+				//by rows
+				for(i=0; i<=strings.length;i++){
 					if(i==0){
-						html+='<th class="header">'+strings[i][j]+'</th>\n';
+						html+='<thead>\n<tr>\n';
 					}
-					else if(j==0 && strings[i][j]===''){console.log(strings[i].length); break;}
-					else if(j==strings[i].length-1){
-						html+='<td>'+strings[i][j]+'</td>\n</tr>\n';
-					}
+					else if(strings[i]==""){continue;}	//skip empty rows as empty element in array.
 					else{
-						html+='<td>'+strings[i][j]+'</td>\n';
+						if(i==1){
+							html+='</tr>\n</thead>\n<tbody>\n';
+						}
+						if(typeof strings[i] !== 'undefined'){
+							if(i%2==0){
+								html+='<tr class="odd">\n';
+							}
+							else if(typeof strings[i+1] !== 'undefined'){
+								html+='<tr class="even">\n';
+							}
+						}
+						else{
+							html+='</tbody>\n';
+							break;
+						}					
+					}
+					//by cells.
+					for(j=0; j<strings[i].length; j++){
+						if(i==0){
+							html+='<th class="header">'+strings[i][j]+'</th>\n';
+						}
+						else if(j==0 && strings[i][j]===''){console.log(strings[i].length); break;}
+						else if(j==strings[i].length-1){
+							html+='<td>'+strings[i][j]+'</td>\n</tr>\n';
+						}
+						else{
+							html+='<td>'+strings[i][j]+'</td>\n';
+						}
 					}
 				}
-			}
-			//console.log(html);			//show in console an HTML code to appending - just test...
+				//console.log(html);			//show in console an HTML code to appending - just test...
+				
+				myTable.innerHTML = html;	//add this as HTML code inside in table element.
 			
-			myTable.innerHTML = html;	//add this as HTML code inside in table element.
-			
-			//add title tooltip to the table.
-			myTable.setAttribute('title', 'Generated, according\n\
+				//add title tooltip to the table.
+				myTable.setAttribute('title', 'Generated, according\n\
 delimiter '+row_delimiter+' for rows,\n\
 and delimiter '+cell_delimiter+' for cells...');
 
-			//now we can lounch a tablesorter... JQuery was been included earlier...
-			$(document).ready(function() 
-				{ 
-					$("#myTable").tablesorter(
-						{
-							sortList:[[0,0],[2,1]],	//enable multisorting, 0 column by ascending, then 2 column by descending
-							widgets: ['zebra']		//enable autochange color for rows to save zebra style.
-						}
-					);
-				} 
-			);
-		}		
+				//now we can lounch a tablesorter... JQuery was been included earlier...
+				$(document).ready(function() 
+					{ 
+						$("#myTable").tablesorter(
+							{
+								sortList:[[0,0],[2,1]],	//enable multisorting, 0 column by ascending, then 2 column by descending
+								widgets: ['zebra']		//enable autochange color for rows to save zebra style.
+							}
+						);
+					} 
+				);
+			}
+		}
 	}
 </script>
