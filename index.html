@@ -1,0 +1,121 @@
+<head>
+<link rel="stylesheet" href="./docs/css/jq.css" type="text/css" media="print, projection, screen">
+<link rel="stylesheet" href="./themes/blue/style.css" type="text/css" media="print, projection, screen">
+
+<script type="text/javascript" src="./jquery-3.3.1.js"></script> 
+<script type="text/javascript" src="./jquery.tablesorter.js"></script>
+</head>
+<a href="./docs/index.html">TableSorter documentations you can see here...</a>
+<h2>Here you can generate the sortable table from text.</h2>
+Enter the text-table, and delimiters:<br>
+<textarea style="width: 800px;  height: 150px; "name="text_table" placeholder="Type your text here!" id="text_table">
+First Name	Last Name	Age	Total	Discount	Difference	Date
+Bruce	Almighty	45	$153.19	44.7%	+77	Jan 18, 2001 9:12 AM
+John	Hood	33	$19.99	25%	+12	Dec 10, 2002 5:14 AM
+Peter	Parker	28	$9.99	20.9%	+12.1	Jul 6, 2006 8:14 AM
+Bruce	Evans	22	$13.19	11%	-100.9	Jan 18, 2007 9:12 AM
+Bruce	Evans	22	$13.19	11%	0	Jan 18, 2007 9:12 AM
+Clark	Kent	18	$15.89	44%	-26	Jan 12, 2003 11:14 AM
+</textarea><br>
+	Rows delimiter<input type="text" id='row_delimiter' value="\n" size="35">
+	Cell delimiter<input type="text" id='cell_delimiter' value="\t" size="35">
+<input type="button" value="Generate table!" onclick="generate_table(); return false;"/>
+
+<br><br>
+<table id="myTable" class="tablesorter" border="0" cellpadding="0" cellspacing="1"></table>
+
+<script>
+	function generate_table(){	//generate the table
+		var text_table = document.getElementById('text_table');
+		
+		var row_delimiter = (document.getElementById('row_delimiter')!==null)
+		? document.getElementById('row_delimiter').value
+		: '\n';
+		
+		var cell_delimiter = (document.getElementById('cell_delimiter')!==null)
+		? document.getElementById('cell_delimiter').value
+		: '\t';
+		
+		if(row_delimiter.indexOf('\\')===-1){row_delimiter = '\\'+row_delimiter+'\\';}			//if this is one symbol, like ';' or ',' and not '\n' or '\t' - use this in RegExp
+		if(cell_delimiter.indexOf('\\')===-1){cell_delimiter = '\\'+cell_delimiter+'\\';}		//or not...
+		
+		var strings = [];	//got rows
+		var re = new RegExp('\s*'+row_delimiter+'s*');	//make regular expression from string to split by rows.
+		
+		//split by rows
+		if(text_table!==null){
+			//console.log(text_table.value);			//show textarea value - test
+			strings = text_table.value.split(re);
+		}
+		
+		var re2 = new RegExp('\s*'+cell_delimiter+'s*');	//make regexp from string to split by cells.
+		//split by cells
+		for(i=0;i<strings.length;i++){
+			strings[i] = strings[i].split(re2);
+		}
+
+		var myTable = document.getElementById('myTable');//table element - to variable
+		if(myTable==null){throw new Error('invalid table is "myTable"');} //if this does not exists - error
+		else{//else fill this...
+			var html = '';
+			
+			//by rows
+			for(i=0; i<=strings.length;i++){
+				if(i==0){
+					html+='<thead>\n<tr>\n';
+				}
+				else if(strings[i]==""){continue;}	//skip empty rows as empty element in array.
+				else{
+					if(i==1){
+						html+='</tr>\n</thead>\n<tbody>\n';
+					}
+					if(typeof strings[i] !== 'undefined'){
+						if(i%2==0){
+							html+='<tr class="odd">\n';
+						}
+						else if(typeof strings[i+1] !== 'undefined'){
+							html+='<tr class="even">\n';
+						}
+					}
+					else{
+						html+='</tbody>\n';
+						break;
+					}					
+				}
+				//by cells.
+				for(j=0; j<strings[i].length; j++){
+					if(i==0){
+						html+='<th class="header">'+strings[i][j]+'</th>\n';
+					}
+					else if(j==0 && strings[i][j]===''){console.log(strings[i].length); break;}
+					else if(j==strings[i].length-1){
+						html+='<td>'+strings[i][j]+'</td>\n</tr>\n';
+					}
+					else{
+						html+='<td>'+strings[i][j]+'</td>\n';
+					}
+				}
+			}
+			//console.log(html);			//show in console an HTML code to appending - just test...
+			
+			myTable.innerHTML = html;	//add this as HTML code inside in table element.
+			
+			//add title tooltip to the table.
+			myTable.setAttribute('title', 'Generated, according\n\
+delimiter '+row_delimiter+' for rows,\n\
+and delimiter '+cell_delimiter+' for cells...');
+
+			//now we can lounch a tablesorter... JQuery was been included earlier...
+			$(document).ready(function() 
+				{ 
+					$("#myTable").tablesorter(
+						{
+							sortList:[[0,0],[2,1]],	//enable multisorting, 0 column by ascending, then 2 column by descending
+							widgets: ['zebra']		//enable autochange color for rows to save zebra style.
+						}
+					);
+				} 
+			);
+		}		
+	}
+</script>
