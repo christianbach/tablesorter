@@ -5,11 +5,15 @@
 <script type="text/javascript" src="./jquery-3.3.1.js"></script> 
 <script type="text/javascript" src="./jquery.tablesorter.js"></script>
 </head>
+
+<body>
 <a href="./docs/index.html">TableSorter documentations you can see here...</a>
 <h2>Here you can generate the sortable table from text.</h2>
 Enter the text-table, and delimiters:<br>
-<textarea style="width: 800px;  height: 150px; "name="text_table" placeholder="Type your text here!" id="text_table">
-First Name	Last Name	Age	Total	Discount	Difference	Date
+
+
+<textarea style="width: 800px;  height: 150px;" name="text_table" placeholder="Type your text here!" id="text_table" oninput="show_hide_delimiters()" title="JSON available...">
+First Name_text	Last Name_text	Age_text	Total_text	Discount_text	Difference_text	Date_text
 Bruce	Almighty	45	$153.19	44.7%	+77	Jan 18, 2001 9:12 AM
 John	Hood	33	$19.99	25%	+12	Dec 10, 2002 5:14 AM
 Peter	Parker	28	$9.99	20.9%	+12.1	Jul 6, 2006 8:14 AM
@@ -17,17 +21,135 @@ Bruce	Evans	22	$13.19	11%	-100.9	Jan 18, 2007 9:12 AM
 Bruce	Evans	22	$13.19	11%	0	Jan 18, 2007 9:12 AM
 Clark	Kent	18	$15.89	44%	-26	Jan 12, 2003 11:14 AM
 </textarea><br>
-	Rows delimiter<input type="text" id='row_delimiter' value="\n" size="35">
-	Cell delimiter<input type="text" id='cell_delimiter' value="\t" size="35">
-<input type="button" value="Generate table!" onclick="generate_table(); return false;"/>
+
+<!--
+<textarea style="width: 800px;  height: 150px;" name="text_table" placeholder="Type your text here!" id="text_table" oninput="show_hide_delimiters();">
+[
+ {
+   "First Name_JSON": "Bruce",
+   "Last Name_JSON": "Almighty",
+   "Age_JSON": 45,
+   "Total_JSON": "$153.19",
+   "Discount_JSON": "44.7%",
+   "Difference_JSON": 77,
+   "Date_JSON": "Jan 18, 2001 9:12 AM"
+ },
+ {
+   "First Name_JSON": "Bruce",
+   "Last Name_JSON": "Evan",
+   "Age_JSON": 22,
+   "Total_JSON": "$13.19",
+   "Discount_JSON": "11%",
+   "Difference_JSON": -100.9,
+   "Date_JSON": "Jan 18, 2007 9:12 AM"
+ },
+ {
+   "First Name_JSON": "Bruce",
+   "Last Name_JSON": "Evan",
+   "Age_JSON": 22,
+   "Total_JSON": "$13.19",
+   "Discount_JSON": "11%",
+   "Difference_JSON": 0,
+   "Date_JSON": "Jan 18, 2007 9:12 AM"
+ },
+ {
+   "First Name_JSON": "Clark",
+   "Last Name_JSON": "Kent",
+   "Age_JSON": 18,
+   "Total_JSON": "$15.89",
+   "Discount_JSON": "44%",
+   "Difference_JSON": -26,
+   "Date_JSON": "Jan 12, 2003 11:14 AM"
+ },
+ {
+   "First Name_JSON": "John",
+   "Last Name_JSON": "Hood",
+   "Age_JSON": 33,
+   "Total_JSON": "$19.99",
+   "Discount_JSON": "25%",
+   "Difference_JSON": 12,
+   "Date_JSON": "Dec 10, 2002 5:14 AM"
+ },
+ {
+   "First Name_JSON": "Peter",
+   "Last Name_JSON": "Parker",
+   "Age_JSON": 28,
+   "Total_JSON": "$9.99",
+   "Discount_JSON": "20.9%",
+   "Difference_JSON": 12.1,
+   "Date_JSON": "Jul 6, 2006 8:14 AM"
+ }
+]
+</textarea><br>
+-->
+<div id='div_row_delimiter' style="display: inline;">Rows delimiter<input type="text" id='row_delimiter' value="\n" size="35"></div>
+<div id='div_cell_delimiter' style="display: inline;">Cell delimiter<input type="text" id='cell_delimiter' value="\t" size="35"></div>
+<input type="button" id="submit_textarea" value="Generate SORTtable!" onclick="generate_table(); return false;"/>
 
 <br><br>
 <div id="table">
 	<table id="myTable" class="tablesorter" border="0" cellpadding="0" cellspacing="1"></table>
 </div>
 
-<script>
-	function generate_table(){	//generate the table
+<script type="text/javascript">
+
+function isJSON(str) {//isJSON string?
+	try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+function show_hide_delimiters(str){ //show/hide input fields for delimiters
+    try {
+        JSON.parse(document.getElementById('text_table').value);
+    } catch (e) {
+        document.getElementById('div_row_delimiter').style.display = 'inline';
+		document.getElementById('div_cell_delimiter').style.display = 'inline';
+		document.getElementById('submit_textarea').value = 'Generate SORTable from text!';
+		return false;
+    }
+	    document.getElementById('div_row_delimiter').style.display = 'none';
+		document.getElementById('div_cell_delimiter').style.display = 'none';
+		document.getElementById('submit_textarea').value = 'Generate SORTable from JSON!';
+		return false;
+}
+
+function generate_table(){//generate the table
+	if(isJSON(document.getElementById('text_table').value)){//if JSON in textarea
+		var data = JSON.parse(document.getElementById('text_table').value); //parse this and push to data
+
+		$(document).ready(function () { //parse table from JSON and append to div
+    
+			var html = '<table id="myTable" class="tablesorter" border="0" cellpadding="0" cellspacing="1" title="Generated, from JSON...">';
+			html += '<thead><tr class="header">';
+			var flag = 0;
+			$.each(data[0], function(index, value){
+				html += '<th>'+index+'</th>';
+			});
+			html += '</tr></thead>';
+			$.each(data, function(index, value){
+				if(index%2==0){html += '<tr class="even">';}
+				else{html += '<tr class="odd">';}
+				$.each(value, function(index2, value2){
+					html += '<td>'+value2+'</td>';
+				});
+				html += '</tr>';
+			});
+			html += '</table>';
+			$('#table').html(html);
+	
+			$("#myTable").tablesorter(
+				{
+					sortList:[[0,0],[2,1]],	//enable multisorting, 0 column by ascending, then 2 column by descending
+					widgets: ['zebra']		//enable autochange color for rows to save zebra style.
+				}
+			);
+		});
+		return false;
+	}else{//else, if text string and delimiters was been specified...
 		var text_table = document.getElementById('text_table');
 		
 		var row_delimiter = (document.getElementById('row_delimiter')!==null)
@@ -101,7 +223,7 @@ Clark	Kent	18	$15.89	44%	-26	Jan 12, 2003 11:14 AM
 						if(i==0){
 							html+='<th class="header">'+strings[i][j]+'</th>\n';
 						}
-						else if(j==0 && strings[i][j]===''){console.log(strings[i].length); break;}
+						else if(j==0 && strings[i][j]===''){break;}
 						else if(j==strings[i].length-1){
 							html+='<td>'+strings[i][j]+'</td>\n</tr>\n';
 						}
@@ -132,5 +254,10 @@ and delimiter '+cell_delimiter+' for cells...');
 				);
 			}
 		}
+		return false;
 	}
+}
+
 </script>
+
+</body>
