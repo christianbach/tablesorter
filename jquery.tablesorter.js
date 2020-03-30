@@ -49,7 +49,7 @@
  *         to sortable tr elements in the thead on a descending sort. Default
  *         value: "headerSortDown"
  * 
- * @option String sortInitialOrder (optional) A string of the inital sorting
+ * @option String sortInitialOrder (optional) A string of the initial sorting
  *         order can be asc or desc. Default value: "asc"
  * 
  * @option String sortMultisortKey (optional) A string of the multi-column sort
@@ -742,7 +742,7 @@
 							// always sort on the locked order.
 							if(this.lockedOrder) this.order = this.lockedOrder;
 							
-							// user only whants to sort on one
+							// user only wants to sort on one
                             // column
                             if (!e[config.sortMultiSortKey]) {
                                 // flush the sort list
