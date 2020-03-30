@@ -89,7 +89,7 @@
  *         appended to user-selected rules. Default value: null
  * 
  * @option Boolean widthFixed (optional) Boolean flag indicating if tablesorter
- *         should apply fixed widths to the table columns. This is usefull when
+ *         should apply fixed widths to the table columns. This is useful when
  *         using the pager companion plugin. This options requires the dimension
  *         jquery plugin. Default value: false
  * 
@@ -98,7 +98,7 @@
  *         Default value: true
  * 
  * @option Boolean debug (optional) Boolean flag indicating if tablesorter
- *         should display debuging information usefull for development.
+ *         should display debuging information useful for development.
  * 
  * @type jQuery
  * 
